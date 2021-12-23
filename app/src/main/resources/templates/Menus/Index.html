@@ -1,0 +1,195 @@
+<template class="task-template">
+    <section id="menus-section" class="section js-section u-category-menu">
+        <header class="section-header">
+            <div class="section-wrapper">
+                <h1>
+                    <svg class="section-icon">
+                        <use xlink:href="/img/icons.svg#icon-menu"></use>
+                    </svg>
+                    自定义菜单
+                    (Customize Menus)
+                </h1>
+                <h3><code>Electron.getMenu()</code> 和 <code>MenuItem</code> 可用于创建自定义本机菜单. </h3>
+                <h3>The <code>Electron.Menu</code> and <code>MenuItem</code> can be used to create custom native menus.
+                </h3>
+
+                <p>菜单一共有两种:应用程序(顶部)菜单和上下文(右键单击)菜单.</p>
+                <p>There are two kinds of menus: the application (top) menu and context (right-click) menu.</p>
+
+                <p>你可以在 <code>controller\MenusController.java</code> 中找到示例源代码.</p>
+                <p>You find the sample source code in <code>controller\MenusController.java</code>.</p>
+            </div>
+        </header>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="application-menu-demo-toggle" class="js-container-target demo-toggle-button">
+                    创建应用程序菜单
+                    (Create an application menu)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <p><code>Electron.Menu</code> 和 <code>MenuItem</code> 允许您自定义应用程序菜单. 如果你没有设置任何菜单, Electron
+                        会默认为你的应用生成一个最小的菜单.</p>
+                    <p>The <code>Electron.Menu</code> and <code>MenuItem</code> allow you to customize your application
+                        menu. If you don't set any menu, Electron will generate a minimal menu for your app by default.
+                    </p>
+
+                    <p>这个应用程序使用下面的代码来设置应用程序菜单. 如果您单击应用程序菜单中的"查看"选项，然后单击"应用程序菜单演示"，您将看到一个信息框显示.</p>
+                    <p>This app uses the code below to set the application menu. If you click the 'View' option in the
+                        application menu and then the 'App Menu Demo', you'll see an information box displayed.</p>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre><code class="java">var menu = new MenuItem[]{
+        MenuItem.builder().label("编辑(Edit)").submenu(new MenuItem[]{
+                MenuItem.builder().label("撤销(Undo)").accelerator("CmdOrCtrl+Z").role(MenuRole.undo).build(),
+                MenuItem.builder().label("重做(Redo)").accelerator("Shift+CmdOrCtrl+Z").role(MenuRole.redo).build(),
+                MenuItem.builder().type(MenuType.separator).build(),
+                MenuItem.builder().label("剪切(Cut)").accelerator("CmdOrCtrl+X").role(MenuRole.cut).build(),
+                MenuItem.builder().label("复制(Copy)").accelerator("CmdOrCtrl+C").role(MenuRole.copy).build(),
+                MenuItem.builder().label("粘贴(Paste)").accelerator("CmdOrCtrl+V").role(MenuRole.paste).build(),
+                MenuItem.builder().label("全选(Select All)").accelerator("CmdOrCtrl+A").role(MenuRole.selectall).build()
+        }).build(),
+        MenuItem.builder().label("视图(View)").submenu(new MenuItem[]{
+                MenuItem.builder().label("重载(Reload)").accelerator("CmdOrCtrl+R").click((unused) ->
+                {
+                    // on reload, start fresh and close any old
+                    // open secondary windows
+                    var mainWindowId = Electron.getWindowManager().GetBrowserWindows().First().getId();
+                    Electron.getWindowManager().GetBrowserWindows().forEach(browserWindow -> {
+                        if (browserWindow.getId() != mainWindowId) {
+                            browserWindow.Close();
+                        } else {
+                            browserWindow.Reload();
+                        }
+                    });
+                }).build(),
+                MenuItem.builder().label("切换全屏(Toggle Full Screen)").accelerator("CmdOrCtrl+F").click((unused) -> Electron.getWindowManager().GetBrowserWindows().First().IsFullScreenAsync().thenAccept(isFullScreen -> Electron.getWindowManager().GetBrowserWindows().First().SetFullScreen(!isFullScreen))).build(),
+                MenuItem.builder().label("打开开发者工具(Open Developer Tools)").accelerator("CmdOrCtrl+I").click((unused) -> Electron.getWindowManager().GetBrowserWindows().First().getWebContents().OpenDevTools()).build(),
+                MenuItem.builder().type(MenuType.separator).build(),
+                MenuItem.builder().label("应用程序菜单示例(App Menu Demo)").click((unused) -> {
+                    var options = new MessageBoxOptions("这个演示是针对菜单部分的，展示了如何在应用程序菜单中创建一个可点击的菜单项" +
+                            "This demo is for the Menu section, showing how to create a clickable menu item in the application menu.");
+                    options.setType(MessageBoxType.info);
+                    options.setTitle("应用程序菜单示例(Application Menu Demo)");
+                    Electron.getDialog().ShowMessageBoxAsync(options);
+                }).build()
+        }).build(),
+        MenuItem.builder().label("窗口(Window)").role(MenuRole.window).submenu(new MenuItem[]{
+                MenuItem.builder().label("最小化(Minimize)").accelerator("CmdOrCtrl+M").role(MenuRole.minimize).build(),
+                MenuItem.builder().label("关闭(Close)").accelerator("CmdOrCtrl+W").role(MenuRole.close).build()
+        }).build(),
+        MenuItem.builder().label("帮助(Help)").role(MenuRole.help).submenu(new MenuItem[]{
+                MenuItem.builder().label("学习更多(Learn More)").click((unused) -> Electron.getShell().OpenExternalAsync("https://github.com/ElectronNET")).build()
+        }).build()
+};
+Electron.getMenu().SetApplicationMenu(menu);</code>
+                    </pre>
+
+                    <div class="demo-protip">
+                        <h2>高级提示(ProTip)</h2>
+                        <strong>了解操作系统菜单差异.</strong>
+                        <strong>Know operating system menu differences.</strong>
+                        <p>在为多个操作系统设计应用程序时，重要的是要注意每个操作系统上应用程序菜单约定的不同方式.</p>
+                        <p>When designing an app for multiple operating systems it's important to be mindful of the ways
+                            application menu conventions differ on each operating system.</p>
+
+                        <p>例如,在 Windows 上, 使用 <code>&</code> 设置快捷键.命名约定也各不相同, 像"Settings" 或 "Preferences".
+                            以下是用于学习操作系统特定标准的文档.</p>
+                        <p>For instance, on Windows, accelerators are set with an <code>&</code>. Naming conventions
+                            also vary, like between "Settings" or "Preferences". Below are resources for learning
+                            operating system specific standards.</p>
+                        <ul>
+                            <li>
+                                <a href="https://developer.apple.com/library/mac/documentation/UserExperience/Conceptual/OSXHIGuidelines/MenuBarMenus.html#//apple_ref/doc/uid/20000957-CH29-SW1">macOS<span
+                                        class="u-visible-to-screen-reader">(opens in new window)</span></a></li>
+                            <li>
+                                <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb226797(v=vs.85).aspx">Windows<span
+                                        class="u-visible-to-screen-reader">(opens in new window)</span></a></li>
+                            <li><a href="https://developer.gnome.org/hig/stable/menu-bars.html.en">Linux<span
+                                    class="u-visible-to-screen-reader">(opens in new window)</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="context-menu-demo-toggle" class="js-container-target demo-toggle-button">
+                    创建上下文菜单
+                    (Create a context menu)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="context-menu">查看示例(View Demo)</button>
+                    </div>
+                    <p>可以使用 <code>Electron.getMenu().SetContextMenu()</code> 和 <code>MenuItem</code>
+                        创建上下文或右键单击菜单.您可以右键单击此应用程序的任意位置或单击演示按钮以查看示例上下文菜单.</p>
+                    <p>A context, or right-click, menu can be created with
+                        the<code>Electron.getMenu().SetContextMenu()</code> and <code>MenuItem</code> as well. You can
+                        right-click anywhere in this app or click the demo button to see an example context menu.</p>
+
+                    <p>在这个演示中，我们使用 <code>ipcRenderer</code> 模块在从渲染器进程显式调用它时显示上下文菜单.</p>
+                    <p>In this demo we use the <code>ipcRenderer</code> module to show the context menu when explicitly
+                        calling it from the renderer process.</p>
+
+                    <p>查看所有可用属性的完整 <a
+                            href="http://electron.atom.io/docs/api/web-contents/#event-context-menu">上下文菜单事件文档</a>.</p>
+                    <p>See the full <a href="http://electron.atom.io/docs/api/web-contents/#event-context-menu">context-menu
+                        event documentation</a> for all the available properties.</p>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre>
+                        <code class="java">final var menu = new MenuItem[]{
+        MenuItem.builder().label("你好(Hello)").click((unused) -> Electron.getDialog().ShowMessageBoxAsync("Electron.Java rocks!")).build(),
+        MenuItem.builder().type(MenuType.separator).build(),
+        MenuItem.builder().label("Electron.Java").type(MenuType.checkbox).checked(true).build()
+};
+
+final var mainWindow = Electron.getWindowManager().GetBrowserWindows().First();
+Electron.getMenu().SetContextMenu(mainWindow, menu);
+
+Electron.getIpcMain().On("show-context-menu", (args) -> Electron.getMenu().ContextMenuPopup(mainWindow));</code>
+                    </pre>
+                    <h5>渲染器进程 (JavaScript)|Renderer Process (JavaScript)</h5>
+                    <pre>
+                        <code class="javascript">const { ipcRenderer } = require("electron");
+
+window.addEventListener('contextmenu', (e) => {
+    e.preventDefault()
+    ipcRenderer.send('show-context-menu');
+}, false);</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            (function () {
+                const {ipcRenderer} = require("electron");
+
+                const contextMenuBtn = document.getElementById('context-menu')
+                contextMenuBtn.addEventListener('click', function () {
+                    ipcRenderer.send('show-context-menu');
+                })
+
+                window.addEventListener('contextmenu', (e) => {
+                    ipcRenderer.send('show-context-menu');
+                    e.preventDefault()
+                }, false);
+
+            }());
+        </script>
+
+    </section>
+</template>

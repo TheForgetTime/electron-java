@@ -1,0 +1,7 @@
+before_install:
+  - wget https://download.bell-sw.com/java/11.0.13+8/bellsoft-jdk11.0.13+8-linux-amd64.tar.gz
+  - tar xvf bellsoft-jdk11.0.13+8-linux-amd64.tar.gz
+  - export JAVA_HOME=`pwd`/jdk11.0.13/ && export PATH=`pwd`/jdk11.0.13/bin:${PATH}
+install:
+  - ./gradlew :electron-api:build :electron-api:publishToMavenLocal -x :electron-api:test
+  - find . -name "*.jar"

@@ -1,0 +1,105 @@
+﻿<template class="task-template">
+    <section id="notifications-section" class="section js-section u-category-native-ui">
+        <header class="notifications">
+            <div class="section-wrapper">
+                <h1>
+                    <svg class="section-icon">
+                        <use xlink:href="/img/icons.svg#icon-notification"></use>
+                    </svg>
+                    桌面通知
+                    (Desktop notifications)
+                </h1>
+                <h3>Electron.Java 中的 <code>Electron.getNotification()</code> 提供了发送桌面通知的能力.</h3>
+                <h3>The <code>Electron.Notification</code> in Electron.Java allows you to add basic desktop
+                    notifications.</h3>
+
+                <p>Electron 允许开发人员使用 <a href="https://notifications.spec.whatwg.org/">HTML5 通知 API</a>方便地发送通知,
+                    使用当前运行的操作系统的原生通知 API 来显示通知.
+                </p>
+                <p>Electron conveniently allows developers to send notifications with the
+                    <a href="https://notifications.spec.whatwg.org/">HTML5 Notification API</a>
+                    , using the currently running operating system’s native notification APIs to display it.
+                </p>
+
+                <p><b>注意:</b>由于这是一个 HTML5 API，所以它只能在渲染器进程中使用.</p>
+                <p><b>Note:</b> Since this is an HTML5 API it is only available in the renderer process.</p>
+
+                <p>你可以在 <code>controller\NotificationsController.java</code> 中找到示例源代码.</p>
+                <p>You find the sample source code in <code>controller\NotificationsController.java</code>.</p>
+            </div>
+        </header>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="basic-notification-demo-toggle" class="js-container-target demo-toggle-button">
+                    基本通知
+                    (Basic notification)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win 7+, macOS, Linux (支持 libnotify)
+                        <span class="demo-meta-divider">|</span> 进程: 渲染进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win 7+, macOS, Linux (that supports libnotify)
+                        <span class="demo-meta-divider">|</span> Process: Renderer
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="basic-noti">查看示例(View demo)</button>
+                    </div>
+                    <p>这个示例演示了一个基本的通知. 纯文本通知.</p>
+                    <p>This demo demonstrates a basic notification. Text only.</p>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre>
+                        <code class="java">var options = new NotificationOptions("Basic Notification", "Short message part");
+
+options.setOnClick(() -> Electron.getDialog().ShowMessageBoxAsync("Notification clicked"));
+Electron.getNotification().Show(options);</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="advanced-notification-demo-toggle" class="js-container-target demo-toggle-button">
+                    带有图像的通知
+                    (Notification with image)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win 7+, macOS, Linux (支持 libnotify)
+                        <span class="demo-meta-divider">|</span> 进程: 渲染进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win 7+, macOS, Linux (that supports libnotify)
+                        <span class="demo-meta-divider">|</span> Process: Renderer
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="advanced-noti">查看示例(View demo)</button>
+                    </div>
+                    <p>这个示例演示了一个基本的通知. 带有文字和图片.</p>
+                    <p>This demo demonstrates a basic notification. Both text and a image.</p>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre>
+                        <code class="java">var options = new NotificationOptions("Notification with image", "Short message plus a custom image");
+
+options.setOnClick(() -> Electron.getDialog().ShowMessageBoxAsync("Notification clicked"));
+options.setIcon("/static/img/programming.png");
+Electron.getNotification().Show(options);</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            (function () {
+                const {ipcRenderer} = require("electron");
+
+                document.getElementById("basic-noti").addEventListener("click", () => {
+                    ipcRenderer.send("basic-noti");
+                });
+
+                document.getElementById("advanced-noti").addEventListener("click", () => {
+                    ipcRenderer.send("advanced-noti");
+                });
+            }());
+        </script>
+    </section>
+</template>

@@ -1,0 +1,6 @@
+spring:
+  web:
+    locale: zh_CN
+  messages:
+    basename: i18n.messages
+    encoding: utf-8

@@ -1,0 +1,294 @@
+<template class="task-template">
+    <section id="windows-section" class="section js-section u-category-windows">
+        <header class="section-header">
+            <div class="section-wrapper">
+                <h1>
+                    <svg class="section-icon">
+                        <use xlink:href="/img/icons.svg#icon-windows"></use>
+                    </svg>
+                    创建和管理窗口(Create and Manage Windows)
+                </h1>
+                <h3>Electron.JAVA 中的<code>Electron.getWindowManager()</code> 为你提供了创建新窗口和管理已存在窗口的能力.</h3>
+                <h3>The <code>Electron.getWindowManager()</code> in Electron.JAVA allows you to create a new browser
+                    window or manage an existing one.</h3>
+
+                <p>每一个窗口都是一个称为渲染进程的独立进程.
+                    此进程于控制应用程序生命周期的主进程一样，拥有对JAVA和Node.js API 的完全访问权限.
+                </p>
+                <p>Each browser window is a separate process, known as the renderer process.
+                    This process, like the main process that controls the life cycle of the app, has full access to the
+                    .NET Core and Node.js APIs.
+                </p>
+
+                <p>你可以在<code>controller\WindowsController.java</code>找到源代码.</p>
+                <p>You find the sample source code in <code>controller\WindowsController.java</code>.</p>
+            </div>
+        </header>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="new-window-demo-toggle" class="js-container-target demo-toggle-button">
+                    创建一个新窗口
+                    (Create a new window)
+                    <div class="demo-meta u-avoid-clicks">
+                        支持的系统: Win, macOS, Linux <span class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">
+                        Supports: Win, macOS, Linux <span class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="new-window">查看示例(View Demo)</button>
+                    </div>
+                    <p>
+                        <code>Electron.getWindowManager()</code>使您能够在您的应用程序中创建新窗口.
+                        这个主进程可以被带有<code>Electron.getIpcMain()</code>的渲染进程调用,例如本示例所示.
+                    </p>
+                    <p>
+                        The <code>Electron.WindowManager</code> gives you the ability to create new windows in your app.
+                        This main process can be used from the renderer process with the <code>Electron.IpcMain</code>,
+                        as is shown in this demo.
+                    </p>
+
+                    <p>
+                        创建新窗口时有很多选项.
+                        本示例只演示了其中一部分,更完整的功能列表请访问<a
+                            href="http://electron.atom.io/docs/api/browser-window" target="_blank">Electron文档<span
+                            class="u-visible-to-screen-reader">(在新窗口打开)</span></a>
+                    </p>
+                    <p>
+                        There are a lot of options when creating a new window.
+                        A few are in this demo, but visit the <a href="http://electron.atom.io/docs/api/browser-window"
+                                                                 target="_blank">documentation<span
+                            class="u-visible-to-screen-reader">(opens in new window)</span></a> for the full list.
+                    </p>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre><code class="java">Electron.getWindowManager().CreateWindowAsync();</code></pre>
+
+                    <div class="demo-protip">
+                        <h2>专家提示|ProTip</h2>
+                        <strong>使用不可见的浏览器窗口运行后台任务.</strong>
+                        <strong>Use an invisible browser window to run background tasks.</strong>
+                        <p>你可以将新的浏览器窗口设置为不显示(不可见),以便将这个额外的渲染器进程用作后台运行java代码的新线程.
+                            你可以通过在定义新窗口时将<code>show</code>属性设置为<code>false</code>实现此功能.</p>
+                        <p>You can set a new browser window to not be shown (be invisible) in order to use that
+                            additional renderer process as a kind of new thread in which to run Java in the background
+                            of your app. You do this by setting the <code>show</code> property to <code>false</code>
+                            when defining the new window.
+                        </p>
+                        <pre><code class="java">@Override
+public void onApplicationEvent(@NotNull ApplicationReadyEvent event) {
+    try {
+        BrowserWindow browserWindow = Electron.getWindowManager().CreateWindowAsync(options -> {
+            options.setShow(false);
+        });
+        browserWindow.AddOnReadToShow((unused) -> browserWindow.Show());
+    } catch (InterruptedException | ExecutionException e) {
+        e.printStackTrace();
+    }
+}</code>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="manage-window-demo-toggle" class="js-container-target demo-toggle-button">
+                    管理窗口状态
+                    (Manage window state)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux <span
+                            class="demo-meta-divider">|</span>进程: Main
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux <span
+                            class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="manage-window">
+                            查看示例
+                            (View Demo)
+                        </button>
+                        <span class="demo-response" id="manage-window-reply"></span>
+                    </div>
+                    <p>在本示例中我们创建了一个新窗口并监听了他的<code>OnMove</code>和<code>OnResize</code>事件. 单击查看示例按钮,
+                        改变新窗口的大小和位置并在此处观察其尺寸于位置更新.</p>
+                    <p>In this demo we create a new window and listen for <code>OnMove</code> and <code>OnResize</code>
+                        events on it. Click the demo button, change the new window and see the dimensions and position
+                        update here, above.</p>
+                    <p>控制窗口状态的方法有很多, 例如大小、位置、焦点状态以及监听窗口变化的事件. 访问<a
+                            href="http://electron.atom.io/docs/api/browser-window">Electron 文档<span
+                            class="u-visible-to-screen-reader">(在新窗口打开)</span></a>获取完整列表.
+                    </p>
+                    <p>There are a lot of methods for controlling the state of the window such as the size, location,
+                        and focus status as well as events to listen to for window changes. Visit the <a
+                                href="http://electron.atom.io/docs/api/browser-window">documentation<span
+                                class="u-visible-to-screen-reader">(opens in new window)</span></a> for the full list.
+                    </p>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre><code>@RequestMapping(value = {"", "/", "index"})
+public String Index() {
+    if (HybridSupport.isElectronActive()) {
+        String viewPath = "http://localhost:" + BridgeSettings.getWebPort() + "/windows/demowindow";
+        Electron.getIpcMain().On("manage-window", (args) ->
+        {
+            Electron.getWindowManager().CreateWindowAsync(viewPath)
+                    .thenAccept(browserWindow -> {
+                        browserWindow.AddOnMove(UpdateReply);
+                        browserWindow.AddOnResize(UpdateReply);
+                    });
+        });
+    }
+
+    return "Windows/Index";
+}
+private final Action0 UpdateReply = unused -> {
+    var browserWindow = Electron.getWindowManager().GetBrowserWindows().Last();
+    browserWindow.GetSizeAsync().thenAcceptBothAsync(
+            browserWindow.GetPositionAsync(),
+            (size, position) -> {
+                String message = "Size: " + size[0] + "," + size[1] + " Position: " + position[0] + "," + position[1] + "";
+
+                var mainWindow = Electron.getWindowManager().GetBrowserWindows().First();
+                Electron.getIpcMain().Send(mainWindow, "manage-window-reply", message);
+            });
+}</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="using-window-events-demo-toggle" class="js-container-target demo-toggle-button">
+                    窗口事件:失焦和聚焦
+                    (Window events: blur and focus)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux <span
+                            class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux <span
+                            class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="listen-to-window">
+                            查看示例
+                            (View Demo)
+                        </button>
+                        <button class="demo-button disappear" id="focus-on-modal-window">
+                            聚焦于示例
+                            (Focus on Demo)
+                        </button>
+                    </div>
+                    <p>在这个演示中, 我们创建了一个新窗口并在其上监听 <code>OnBlur</code> 事件.
+                        单击演示按钮创建一个新的模态窗口, 然后通过单击将焦点切换回父窗口.
+                        您可以单击<i>Focus on Demo</i> 按钮再次将焦点切换到模态窗口.
+                    </p>
+                    <p>In this demo, we create a new window and listen for <code>OnBlur</code> event on it. Click the
+                        demo button to create a new modal window, and switch focus back to the parent window by clicking
+                        on it. You can click the <i>Focus on Demo</i> button to switch focus to the modal window again.
+                    </p>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre><code class="java">var mainBrowserWindow = Electron.getWindowManager().GetBrowserWindows().First();
+Electron.getWindowManager().CreateWindowAsync(viewPath)
+        .thenAccept(browserWindow -> {
+            browserWindow.AddOnFocus(() -> Electron.getIpcMain().Send(mainBrowserWindow, "listen-to-window-focus"));
+            browserWindow.AddOnBlur(() -> Electron.getIpcMain().Send(mainBrowserWindow, "listen-to-window-blur"));
+            Electron.getIpcMain().On("listen-to-window-set-focus", (x) -> browserWindow.Focus());
+        });</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button class="js-container-target demo-toggle-button">
+                    创建无边框窗口
+                    (Create a frameless window)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux <span
+                            class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux <span
+                            class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="frameless-window">
+                            查看示例
+                            (View Demo)
+                        </button>
+                    </div>
+                    <p>无边框窗口是一个没有像工具栏, 标题栏, 状态栏, 边框等<a href="https://developer.mozilla.org/en-US/docs/Glossary/Chrome">"装饰"</a>的窗口.
+                        你可以设置<code>Frame</code>为<code>false</code>并使用该参数创建新窗口.
+                    </p>
+
+                    <h5>主进程(Java)|Main Process(Java)</h5>
+                    <pre><code class="java">var options = new BrowserWindowOptions();
+options.setFrame(false);
+Electron.getWindowManager().CreateWindowAsync(options, viewPath);</code>
+                    </pre>
+
+                    <p>窗口也可以设置为透明背景. 设置<code>Transparent</code>选项为<code>true</code>, 可以是窗口透明:</p>
+                    <pre><code class="java">var options = new BrowserWindowOptions();
+options.setFrame(false);
+options.setTransparent(true);
+Electron.getWindowManager().CreateWindowAsync(options, viewPath);</code>
+                    </pre>
+                    <p>
+                        更多细节参见<a href="http://electron.atom.io/docs/api/frameless-window/">无边框窗口</a>文档.
+                    </p>
+                    <p>
+                        For more details, see the <a href="http://electron.atom.io/docs/api/frameless-window/">Frameless
+                        Window</a> documentation.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <script>
+            (function () {
+                const {ipcRenderer} = require("electron");
+                document.getElementById("new-window").addEventListener("click", () => {
+                    ipcRenderer.send("new-window");
+                });
+
+                document.getElementById("manage-window").addEventListener("click", () => {
+                    ipcRenderer.send("manage-window");
+                });
+
+                ipcRenderer.on("manage-window-reply", (sender, data) => {
+                    document.getElementById("manage-window-reply").innerText = data;
+                });
+
+                document.getElementById("listen-to-window").addEventListener("click", () => {
+                    ipcRenderer.send("listen-to-window");
+                });
+
+                document.getElementById('focus-on-modal-window').addEventListener("click", () => {
+                    ipcRenderer.send("listen-to-window-set-focus");
+                });
+
+                ipcRenderer.on("listen-to-window-focus", (sender, data) => {
+                    const focusModalBtn = document.getElementById('focus-on-modal-window');
+                    focusModalBtn.classList.add('disappear');
+                    focusModalBtn.classList.remove('smooth-appear');
+                });
+
+                ipcRenderer.on("listen-to-window-blur", (sender, data) => {
+                    const focusModalBtn = document.getElementById('focus-on-modal-window');
+                    focusModalBtn.classList.add('smooth-appear');
+                    focusModalBtn.classList.remove('disappear');
+                });
+
+                document.getElementById('frameless-window').addEventListener("click", () => {
+                    ipcRenderer.send("frameless-window");
+                });
+            }());
+        </script>
+    </section>
+</template>

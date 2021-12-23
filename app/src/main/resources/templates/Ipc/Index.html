@@ -1,0 +1,138 @@
+﻿﻿
+<template class="task-template">
+    <section id="ipc-section" class="section js-section u-category-communication">
+        <header class="communication">
+            <div class="section-wrapper">
+                <h1>
+                    <svg class="section-icon">
+                        <use xlink:href="/img/icons.svg#icon-communication"></use>
+                    </svg>
+                    进程间通信
+                    (Communication between processes)
+                </h1>
+                <h3><code>ipc</code>（进程间通信）模块允许你在主进程和渲染进程之间发送和接收同步和异步消息.</h3>
+                <h3>The <code>ipc</code> (inter-process communication) module allows you to send and receive synchronous
+                    and asynchronous messages between the main and renderer processes.</h3>
+
+                <p>这有一个可以用于此模块的两个进程：<code>Electron.IpcMain</code> 和 <code>ipcRenderer</code>的版本.</p>
+                <p>There is a version of this module available for both processes: <code>Electron.IpcMain</code> and
+                    <code>ipcRenderer</code>.</p>
+
+                <p>你可以在 <code>controller\IpcController.java</code> 中找到示例源代码.</p>
+                <p>You find the sample source code in <code>controller\IpcController.java</code>.</p>
+            </div>
+        </header>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="async-msg-demo-toggle" class="js-container-target demo-toggle-button">
+                    异步消息
+                    (Asynchronous messages)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux<span
+                            class="demo-meta-divider">|</span> 进程: 主进程和渲染线程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux<span
+                            class="demo-meta-divider">|</span> Process: Both
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="async-msg">Ping</button>
+                        <span class="demo-response" id="async-reply"></span>
+                    </div>
+                    <p>使用 <code>ipcRenderer</code> 在进程之间异步发送消息是首选方法,因为它会在完成时返回,而不会阻塞同一进程中的其他操作.</p>
+                    <p>Using <code>ipcRenderer</code> to send messages between processes asynchronously is the preferred
+                        method since it will return when finished without blocking other operations in the same process.
+                    </p>
+
+                    <p>这个例子从这个进程(渲染器)向主进程发送一个"ping". 然后主进程回复"pong".</p>
+                    <p>This example sends a "ping" from this process (renderer) to the main process. The main process
+                        then replies with "pong".</p>
+                    <h5>渲染器进程(JavaScript)|Renderer Process (JavaScript)</h5>
+                    <pre>
+                        <code class="javascript">const { ipcRenderer } = require("electron");
+
+document.getElementById("async-msg").addEventListener("click", () => {
+    ipcRenderer.send("async-msg", 'ping');
+});
+
+ipcRenderer.on('asynchronous-reply', (event, arg) => {
+    const message = `Asynchronous message reply: ${arg}`;
+    document.getElementById('async-reply').innerHTML = message;
+});</code>
+                    </pre>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre>
+                        <code class="java">Electron.getIpcMain().On("async-msg", (args) ->
+{
+    var mainWindow = Electron.getWindowManager().GetBrowserWindows().First();
+    Electron.getIpcMain().Send(mainWindow, "asynchronous-reply", "pong");
+});</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="sync-msg-demo-toggle" class="js-container-target demo-toggle-button">
+                    同步消息
+                    (Synchronous messages)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux<span
+                            class="demo-meta-divider">|</span> 进程: 主进程和渲染线程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux<span
+                            class="demo-meta-divider">|</span> Process: Both
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="sync-msg">Ping</button>
+                        <span class="demo-response" id="sync-reply"></span>
+                    </div>
+                    <p>您也可以使用 <code>ipcRenderer</code> 模块在进程之间发送同步消息,但请注意,此方法的同步性质意味着它在完成任务时<b>将阻止</b>其他操作.</p>
+                    <p>You can use the <code>ipcRenderer</code> module to send synchronous messages between processes as
+                        well, but note that the synchronous nature of this method means that it <b>will block</b> other
+                        operations while completing its task.</p>
+
+                    <p>此示例从该进程（渲染器）向主进程发送同步消息"ping"。 然后主进程回复"pong".</p>
+                    <p>This example sends a synchronous message, "ping", from this process (renderer) to the main
+                        process. The main process then replies with "pong".</p>
+                    <h5>渲染器进程(JavaScript)|Renderer Process (JavaScript)</h5>
+                    <pre><code class="javascript">const { ipcRenderer } = require("electron");
+
+document.getElementById("sync-msg").addEventListener("click", () => {
+    const reply = ipcRenderer.sendSync("sync-msg", "ping");
+    const message = `Synchronous message reply: ${reply}`;
+    document.getElementById('sync-reply').innerHTML = message;
+});</code></pre>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre>
+                        <code class="java">Electron.getIpcMain().OnSync("sync-msg", (args) -> "pong");</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                const {ipcRenderer} = require("electron");
+
+                document.getElementById("async-msg").addEventListener("click", () => {
+                    ipcRenderer.send("async-msg", 'ping');
+                });
+
+                ipcRenderer.on('asynchronous-reply', (event, arg) => {
+                    const message = `Asynchronous message reply: ${arg}`;
+                    document.getElementById('async-reply').innerHTML = message;
+                });
+
+                document.getElementById("sync-msg").addEventListener("click", () => {
+                    const reply = ipcRenderer.sendSync("sync-msg", "ping");
+                    const message = `Synchronous message reply: ${reply}`;
+                    document.getElementById('sync-reply').innerHTML = message;
+                });
+            }());
+        </script>
+    </section>
+</template>

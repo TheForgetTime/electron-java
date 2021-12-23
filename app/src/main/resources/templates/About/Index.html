@@ -1,0 +1,82 @@
+<template class="task-template">
+    <div id="about-modal" class="about modal">
+        <div class="about-wrapper">
+            <header class="about-header">
+                <img class="about-logo" src="/img/about.png" srcset="/img/about.png 1x,/img/about@2x.png 2x"
+                     alt="Electron.JAVA API Demos">
+            </header>
+            <main class="about-sections">
+                <section class="about-section play-along">
+                    <h2>一起看</h2>
+                    <p>将一下代码片段添加到您的项目中一起用Electron支持.
+                        <a href="">Electron快速入门<span class="u-visible-to-screen-reader">(在新窗口打开)</span></a>是一个符合这些演示代码的基础应用.
+                        按照此处的说明进行操作. 要使用Electron.JAVA,请在依赖项中添加 <strong>electron-api</strong>.
+                    </p>
+                    <p>
+                        <code class="kotlin">implementation("io.gitee.n__n:electron-api:0.0.1")</code>
+                    </p>
+                    然后将 Electron.UseElectron(String[] args) 添加到ApplicationStartedEvent监听器中.
+
+                    <pre>
+                        <code class="java">@Slf4j
+@Component
+public class StartedEventListener implements ApplicationListener&lt;ApplicationStartedEvent&gt; {
+    @Override
+    public void onApplicationEvent(ApplicationStartedEvent event) {
+        log.info(Arrays.toString(event.getArgs()));
+        Electron.UseElectron(event.getArgs(), log);
+    }
+}</code>
+                    </pre>
+                </section>
+                <section class="about-section about-code">
+                    <h2>关于本代码</h2>
+                    <p>此应用程序的源代码已按照易于导航的方式进行组织.
+                        您可以在Controllers中找到每个API分类的源代码.
+                        这个演示应用程序基于 <a href="https://github.com/electron/electron-api-demos" target="_blank">Electron API
+                            示例</a>.
+                    </p>
+                </section>
+                <section class="about-section play-along">
+                    <h2>Play Along</h2>
+                    <p>Use the demo snippets in an Electron app of your own.
+                        The <a href="">Electron Quick Start<span class="u-visible-to-screen-reader">(opens in new window)</span></a>
+                        app is a bare-bones setup that pairs with these demos.
+                        Follow the instructions here to get it going. To activate Electron.JAVA include the <strong>electron-api</strong>
+                        in your dependencies.
+                    <p>
+                        <code class="kotlin">implementation("io.gitee.n__n:electron-api:0.0.1")</code>
+                    </p>
+                    Then add Electron.UseElectron(String[] args) to the ApplicationStartedEvent listener.
+
+                    <pre>
+                        <code class="java">@Slf4j
+@Component
+public class StartedEventListener implements ApplicationListener&lt;ApplicationStartedEvent&gt; {
+    @Override
+    public void onApplicationEvent(ApplicationStartedEvent event) {
+        log.info(Arrays.toString(event.getArgs()));
+        Electron.UseElectron(event.getArgs(), log);
+    }
+}</code>
+                    </pre>
+                </section>
+                <section class="about-section about-code">
+                    <h2>About the Code</h2>
+                    <p>The source code of this app has been organized with ease of navigation in mind.
+                        You will find for each API Category the source code into the Controllers.
+                        This Demo-App based on the <a href="https://github.com/electron/electron-api-demos"
+                                                      target="_blank">Electron API Demos</a>.</p>
+                </section>
+                <footer class="about-section footer">
+                    <div class="rainbow-button-wrapper">
+                        <button id="get-started" class="about-button modal-hide">
+                            开始
+                            (Get Started)
+                        </button>
+                    </div>
+                </footer>
+            </main>
+        </div>
+    </div>
+</template>

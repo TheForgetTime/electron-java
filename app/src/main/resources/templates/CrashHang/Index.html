@@ -1,0 +1,142 @@
+<template class="task-template">
+    <section id="crash-hang-section" class="section js-section u-category-windows">
+        <header class="section-header">
+            <div class="section-wrapper">
+                <h1>
+                    <svg class="section-icon">
+                        <use xlink:href="/img/icons.svg#icon-windows"></use>
+                    </svg>
+                    处理窗口崩溃和挂起
+                    (Handling Window Crashes and Hangs)
+                </h1>
+                <h3>当渲染器进程崩溃或挂起时,<code>Electron.getWindowManager()</code>将发出事件.
+                    您可以监听这些事件，让用户有机会重新加载、等待或关闭该窗口.</h3>
+                <h3>The <code>Electron.WindowManager</code> will emit events when the renderer process crashes or hangs.
+                    You can listen for these events and give users the chance to reload, wait or close that window.</h3>
+
+                <p>您可以在<code>controller\CrashHangController.java</code>中找到示例源代码.</p>
+                <p>You find the sample source code in <code>controller\CrashHangController.java</code>.</p>
+            </div>
+        </header>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="new-window-crashes-demo-toggle" class="js-container-target demo-toggle-button">
+                    进程崩溃后重新启动窗口
+                    (Relaunch window after the process crashes)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="process-crash">查看示例(View Demo)</button>
+                    </div>
+                    <p>在此演示中,我们创建了一个新窗口并提供了一个链接,该链接将使用 <code>process.crash()</code> 强制崩溃.</p>
+                    <p>In this demo we create a new window and provide a link that will force a crash using <code>process.crash()</code>.
+                    </p>
+                    <p>该窗口正在侦听崩溃事件，当该事件发生时，它会提示用户两个选项：重新加载或关闭.</p>
+                    <p>The window is listening for the crash event and when the event occurs it prompts the user with
+                        two options: reload or close.</p>
+
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre><code class="java">Electron.getWindowManager().CreateWindowAsync(viewPath).thenAccept(browserWindow -> browserWindow.getWebContents().AddOnCrashed((killed) -> {
+    System.out.println("This process has crashed");
+    var options = new MessageBoxOptions("This process has crashed.");
+    options.setType(MessageBoxType.info);
+    options.setTitle("Renderer Process Crashed");
+    options.setButtons(new String[]{"Reload", "Close"});
+    Electron.getDialog().ShowMessageBoxAsync(options).thenAccept(messageBoxResult -> {
+        if (messageBoxResult.getResponse() == 0) {
+            browserWindow.Reload();
+        } else {
+            browserWindow.Close();
+        }
+    });
+}));</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="new-window-hangs-demo-toggle" class="js-container-target demo-toggle-button">
+                    进程挂起后重新启动窗口
+                    (Relaunch window after the process hangs)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="process-hang">查看示例(View Demo)</button>
+                    </div>
+                    <p>在此演示中,我们创建了一个新窗口并提供了一个链接,该链接将使用 <code>process.hang()</code> 强制进程挂起.</p>
+                    <p>In this demo we create a new window and provide a link that will force the process to hang using
+                        <code>process.hang()</code>.</p>
+
+                    <p>该窗口在侦听到进程变得无响应时(这可能需要长达30秒). 当此事件发生时,它会提示用户两个选项:重新加载或关闭.</p>
+                    <p>The window is listening for the process to become officially unresponsive (this can take up to 30
+                        seconds). When this event occurs it prompts the user with two options: reload or close.</p>
+
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre><code class="java">Electron.getWindowManager().CreateWindowAsync(viewPath).thenAccept(browserWindow -> browserWindow.AddOnUnresponsive((unused) ->
+{
+    var options = new MessageBoxOptions("This process is hanging.");
+    options.setType(MessageBoxType.info);
+    options.setTitle("Renderer Process Hanging");
+    options.setButtons(new String[]{"Reload", "Close"});
+    Electron.getDialog().ShowMessageBoxAsync(options).thenAccept(messageBoxResult -> {
+        if (messageBoxResult.getResponse() == 0) {
+            browserWindow.Reload();
+        } else {
+            browserWindow.Close();
+        }
+    });
+}));</code>
+                    </pre>
+
+                    <div class="demo-protip">
+                        <h2>专家提示(ProTip)</h2>
+                        <strong>等待进程再次响应.</strong>
+                        <strong>Wait for the process to become responsive again.</strong>
+                        <p>在进程挂起的情况下, 第三个选择是等待并查看问题是否解决,让进程再次响应. 为此, 请使用<code>BrowserWindow</code>
+                            的'OnResponsive'事件，如下所示.</p>
+                        <p>A third option in the case of a process that is hanging is to wait and see if the problem
+                            resolves, allowing the process to become responsive again. To do this, use the <code>BrowserWindow</code>
+                            event 'OnResponsive' as shown below.</p>
+                        <pre><code class="java">browserWindow.AddOnResponsive(() =>
+{
+    // Do something when the window is responsive again
+});</code>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script type="text/javascript">
+            (function () {
+                const {ipcRenderer} = require("electron");
+
+                document.getElementById("process-crash").addEventListener("click", () => {
+                    ipcRenderer.send("process-crash");
+                });
+
+                document.getElementById("process-hang").addEventListener("click", () => {
+                    ipcRenderer.send("process-hang");
+                });
+
+            }());
+        </script>
+
+    </section>
+</template>

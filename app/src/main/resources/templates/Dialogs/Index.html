@@ -1,0 +1,277 @@
+﻿<template class="task-template">
+    <section id="dialogs-section" class="section js-section u-category-native-ui">
+        <header class="section-header">
+            <div class="section-wrapper">
+                <h1>
+                    <svg class="section-icon">
+                        <use xlink:href="/img/icons.svg#icon-native-ui"></use>
+                    </svg>
+                    使用系统对话框
+                    (Use system dialogs)
+                </h1>
+                <h3>Electron.Java 中的 <code>Electron.Dialog</code> 允许您使用本机系统对话框打开文件或目录、保存文件或显示信息性消息.</h3>
+                <h3>The <code>Electron.Dialog</code> in Electron.Java allows you to use native system dialogs for
+                    opening files or directories, saving a file or displaying informational messages.
+                </h3>
+
+                <p>这是一个主进程模块，因为该进程使用本机实用程序更高效，并且它允许在不中断页面渲染器进程中的可见元素的情况下进行调用. </p>
+                <p>This is a main process module because this process is more efficient with native utilities and it
+                    allows the call to happen without interupting the visible elements in your page's renderer
+                    process.
+                </p>
+
+                <p>你可以在 <code>controller\DialogsController.java</code> 中找到示例源代码.</p>
+                <p>You find the sample source code in <code>controller\DialogsController.java</code>.</p>
+            </div>
+        </header>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="open-file-demo-toggle" class="js-container-target demo-toggle-button">
+                    打开文件或目录
+                    (Open a File or Directory)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="select-directory">查看示例(View Demo)</button>
+                        <span class="demo-response" id="selected-file"></span>
+                    </div>
+                    <p>
+                        在此演示中,<code>ipcRenderer</code> 用于从渲染器进程发送消息,指示主进程启动打开文件（或目录）对话框. 如果选择了一个文件,主进程可以将该信息发送回渲染器进程.
+                    </p>
+                    <p>In this demo, the <code>ipcRenderer</code> is used to send a message from the renderer process
+                        instructing the main process to launch the open file (or directory) dialog. If a file is
+                        selected, the main process can send that information back to the renderer process.</p>
+                    <h5>渲染器进程(JavaScript)|Renderer Process (JavaScript)</h5>
+                    <pre><code class="language-js">const { ipcRenderer } = require("electron");
+
+document.getElementById("select-directory").addEventListener("click", () => {
+    ipcRenderer.send("select-directory");
+});
+
+ipcRenderer.on("select-directory-reply", (sender, path) => {
+    document.getElementById("selected-file").innerText = `You selected: ${path}`;;
+});</code></pre>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre>
+                        <code class="java">Electron.getIpcMain().On("select-directory", (args) -> {
+    var mainWindow = Electron.getWindowManager().GetBrowserWindows().First();
+    var options = OpenDialogOptions.builder()
+            .properties(new OpenDialogProperty[]{
+                    OpenDialogProperty.OPEN_FILE,
+                    OpenDialogProperty.OPEN_DIRECTORY
+            })
+            .build();
+
+    Electron.getDialog().ShowOpenDialogAsync(mainWindow, options).thenAccept((String[] files) -> Electron.getIpcMain().Send(mainWindow, "select-directory-reply", (Object[]) files));
+});</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="error-dialog-demo-toggle" class="js-container-target demo-toggle-button">
+                    错误对话框
+                    (Error Dialog)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button id="error-dialog" class="demo-button">查看示例(View Demo)</button>
+                    </div>
+                    <p>在此演示中,<code>ipcRenderer</code> 用于从渲染器进程发送消息, 指示主进程启动错误对话框.</p>
+                    <p>In this demo, the <code>ipcRenderer</code> is used to send a message from the renderer process
+                        instructing the main process to launch the error dialog.</p>
+
+                    <h5>渲染器进程(JavaScript)|Renderer Process (JavaScript)</h5>
+                    <pre>
+                        <code class="language-js">const { ipcRenderer } = require("electron");
+
+document.getElementById("error-dialog").addEventListener("click", () => {
+    ipcRenderer.send("error-dialog");
+});</code>
+                    </pre>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre>
+                        <code class="java">Electron.getIpcMain().On("error-dialog", (args) ->
+        Electron.getDialog().ShowErrorBox("An Error Message", "Demonstrating an error message.")
+);</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="information-dialog-demo-toggle" class="js-container-target demo-toggle-button">
+                    信息对话框
+                    (Information Dialog)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux
+                        <span class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="information-dialog">查看示例(View Demo)</button>
+                        <span class="demo-response" id="info-selection"></span>
+                    </div>
+                    <p>在此演示中,<code>ipcRenderer</code> 用于从渲染器进程发送消息,指示主进程启动信息对话框. 可以为响应提供选项，然后可以将其中继回渲染器进程. </p>
+                    <p>In this demo, the <code>ipcRenderer</code> is used to send a message from the renderer process
+                        instructing the main process to launch the information dialog. Options may be provided for
+                        responses which can then be relayed back to the renderer process.
+                    </p>
+
+                    <p>注意: <code>title</code> 属性在 macOS 中不显示.</p>
+                    <p>Note: The <code>title</code> property is not displayed in macOS.</p>
+
+                    <p>信息对话框可以包含一个图标、供您选择的按钮、标题和消息.</p>
+                    <p>An information dialog can contain an icon, your choice of buttons, title and message.</p>
+                    <h5>渲染器进程(JavaScript)|Renderer Process (JavaScript)</h5>
+                    <pre><code class="javascript">document.getElementById("information-dialog").addEventListener("click", () => {
+    ipcRenderer.send("information-dialog");
+});
+
+ipcRenderer.on("information-dialog-reply", (sender, index) => {
+    let message = 'You selected ';
+
+    if(index == 0) {
+        message += 'yes.'
+    } else {
+        message += 'no.'
+    }
+
+    document.getElementById("info-selection").innerText = message;
+});</code></pre>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre>
+                        <code class="java">Electron.getIpcMain().On("information-dialog", (args) ->
+{
+    var options = MessageBoxOptions.builder()
+            .message("This is an information dialog. Isn't it nice?")
+            .type(MessageBoxType.INFO)
+            .title("Information")
+            .buttons(new String[]{"Yes", "No"})
+            .build();
+
+    Electron.getDialog().ShowMessageBoxAsync(options).thenAccept(messageBoxResult -> {
+        var mainWindow = Electron.getWindowManager().GetBrowserWindows().First();
+        Electron.getIpcMain().Send(mainWindow, "information-dialog-reply", messageBoxResult.getResponse());
+    });
+});</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo">
+            <div class="demo-wrapper">
+                <button id="save-dialog-demo-toggle" class="js-container-target demo-toggle-button">
+                    保存对话框
+                    (Save Dialog)
+                    <div class="demo-meta u-avoid-clicks">支持的系统: Win, macOS, Linux<span
+                            class="demo-meta-divider">|</span> 进程: 主进程
+                    </div>
+                    <div class="demo-meta u-avoid-clicks">Supports: Win, macOS, Linux<span
+                            class="demo-meta-divider">|</span> Process: Main
+                    </div>
+                </button>
+                <div class="demo-box">
+                    <div class="demo-controls">
+                        <button class="demo-button" id="save-dialog">查看示例(View Demo)</button>
+                        <span class="demo-response" id="file-saved"></span>
+                    </div>
+                    <p> 在此演示中,<code>ipcRenderer</code> 用于从渲染器进程发送消息,指示主进程启动保存对话框. 它返回用户选择的路径,该路径可以中继回渲染器进程. </p>
+                    <p>In this demo, the <code>ipcRenderer</code> is used to send a message from the renderer process
+                        instructing the main process to launch the save dialog. It returns the path selected by the user
+                        which can be relayed back to the renderer process.
+                    </p>
+                    <h5>渲染器进程(JavaScript)|Renderer Process (JavaScript)</h5>
+                    <pre>
+                        <code class="javascript">const { ipcRenderer } = require("electron");
+
+document.getElementById("save-dialog").addEventListener("click", () => {
+    ipcRenderer.send("save-dialog");
+});
+
+ipcRenderer.on("save-dialog-reply", (sender, path) => {
+    if (!path) path = 'No path';
+    document.getElementById('file-saved').innerHTML = `Path selected: ${path}`;
+});</code>
+                    </pre>
+                    <h5>主进程(Java)|Main Process (Java)</h5>
+                    <pre><code class="java">Electron.getIpcMain().On("save-dialog", (args) ->
+{
+    var mainWindow = Electron.getWindowManager().GetBrowserWindows().First();
+    var options = SaveDialogOptions.builder()
+            .title("Save an Image")
+            .filters(new FileFilter[]{
+                    FileFilter.builder().name("Images").extensions(new String[]{"jpg", "png", "gif"}).build()
+            }).build();
+
+    Electron.getDialog().ShowSaveDialogAsync(mainWindow, options).thenAccept((result) -> Electron.getIpcMain().Send(mainWindow, "save-dialog-reply", result));
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            (function () {
+                const {ipcRenderer} = require("electron");
+
+                document.getElementById("select-directory").addEventListener("click", () => {
+                    ipcRenderer.send("select-directory");
+                });
+
+                ipcRenderer.on("select-directory-reply", (sender, path) => {
+                    document.getElementById("selected-file").innerText = `You selected: ${path}`;
+                });
+
+                document.getElementById("error-dialog").addEventListener("click", () => {
+                    ipcRenderer.send("error-dialog");
+                });
+
+                document.getElementById("information-dialog").addEventListener("click", () => {
+                    ipcRenderer.send("information-dialog");
+                });
+
+                ipcRenderer.on("information-dialog-reply", (sender, index) => {
+                    let message = 'You selected ';
+
+                    if (index == 0) {
+                        message += 'yes.'
+                    } else {
+                        message += 'no.'
+                    }
+
+                    document.getElementById("info-selection").innerText = message;
+                });
+
+                document.getElementById("save-dialog").addEventListener("click", () => {
+                    ipcRenderer.send("save-dialog");
+                });
+
+                ipcRenderer.on("save-dialog-reply", (sender, path) => {
+                    if (!path) path = 'No path';
+                    document.getElementById('file-saved').innerHTML = `Path selected: ${path}`;
+                });
+
+            }());
+        </script>
+    </section>
+</template>

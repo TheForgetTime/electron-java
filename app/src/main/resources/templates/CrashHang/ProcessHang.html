@@ -1,0 +1,32 @@
+﻿﻿
+<style>
+    body {
+        padding: 20px;
+        font-family: system, -apple-system, '.SFNSText-Regular', 'SF UI Text', 'Lucida Grande', 'Segoe UI', Ubuntu, Cantarell, sans-serif;
+        color: #fff;
+        background-color: #8aba87;
+        text-align: center;
+    }
+
+    p {
+        font-size: 32px;
+    }
+
+    #crash {
+        color: white;
+        opacity: 0.7;
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 12px;
+        text-decoration: none;
+    }
+</style>
+
+<p>单击下方链接挂起当前进程.</p>
+<small>(这最多需要 30 秒.)</small>
+<p>Click the link below to hang and then reload this process.</p>
+<small>(This will take up to 30 seconds.)</small>
+
+<a id="crash" href="javascript:process.hang()">挂起当前进程(Hang this process)</a>

@@ -1,0 +1,41 @@
+package io.gitee.nn.electron.api.entities;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+
+public enum MessageBoxType {
+    /**
+     * The none
+     */
+    NONE("none"),
+
+    /**
+     * The information
+     */
+    INFO("info"),
+
+    /**
+     * The error
+     */
+    ERROR("error"),
+
+    /**
+     * The question
+     */
+    QUESTION("question"),
+
+    /**
+     * The warning
+     */
+    WARNING("warning");
+
+    private final String value;
+
+    MessageBoxType(String value) {
+        this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
+}

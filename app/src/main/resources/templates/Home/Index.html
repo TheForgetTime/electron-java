@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/variables.css"/>
+    <link rel="stylesheet" href="/css/nativize.css">
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/about.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/section.css">
+    <link rel="stylesheet" href="/css/demo.css">
+    <link rel="stylesheet" href="/css/github.css">
+    <link rel="stylesheet" href="/css/highlight.min.css">
+</head>
+<body>
+<nav class="nav js-nav">
+    <header class="nav-header">
+        <h1 class="nav-title">Electron.Java <strong>API 示例</strong></h1>
+    </header>
+    <div class="nav-item u-category-windows">
+        <h5 class="nav-category" th:text="#{home.index.language}"></h5>
+        <a class="nav-button" th:href="@{/home/index(lang='zh_CN')}">中文</a>
+        <a class="nav-button" th:href="@{/home/index(lang='en_US')}">English</a>
+    </div>
+    <div class="nav-item u-category-windows">
+        <h5 class="nav-category">
+            <svg class="nav-icon">
+                <use xlink:href="/img/icons.svg#icon-windows"></use>
+            </svg>
+            窗口(Windows)
+        </h5>
+        <button type="button" id="button-windows" data-section="windows" class="nav-button">
+            创建和管理<em>窗口</em>
+            (Create and manage <em>windows</em>)
+        </button>
+        <button type="button" id="button-crash-hang" data-section="crash-hang" class="nav-button">
+            处理窗口<em>崩溃和挂起</em>
+            (Handling window <em>crashes and hangs</em>)
+        </button>
+    </div>
+
+    <div class="nav-item u-category-menu">
+        <h5 class="nav-category">
+            <svg class="nav-icon">
+                <use xlink:href="/img/icons.svg#icon-menu"></use>
+            </svg>
+            菜单(Menus)
+        </h5>
+        <button type="button" id="button-menus" data-section="menus" class="nav-button">
+            自定义<em>菜单</em>
+            (Customize <em>menus</em>)
+        </button>
+        <button type="button" id="button-shortcuts" data-section="shortcuts" class="nav-button">
+            注册键盘<em>快捷键</em>
+            (Register keyboard <em>shortcuts</em>)
+        </button>
+    </div>
+
+    <div class="nav-item u-category-native-ui">
+        <h5 class="nav-category">
+            <svg class="nav-icon">
+                <use xlink:href="/img/icons.svg#icon-native-ui"></use>
+            </svg>
+            本机用户接口(Native User Interface)
+        </h5>
+        <button type="button" id="button-ex-links-file-manager" data-section="ex-links-file-manager" class="nav-button">
+            打开<em>外部链接</em>或系统<em>文件管理</em>
+            (Open <em>external links</em> or system <em>file manager</em>)
+        </button>
+        <button type="button" id="button-notifications" data-section="notifications" class="nav-button">
+            <em>有图</em>或<em>无图</em>通知
+            (Notifications with and without custom <em>image</em>)
+        </button>
+        <button type="button" id="button-dialogs" data-section="dialogs" class="nav-button">
+            使用系统<em>对话框</em>
+            (Use system <em>dialogs</em>)
+        </button>
+        <button type="button" id="button-tray" data-section="tray" class="nav-button">
+            将你的app放进<em>托盘</em>
+            (Put your app in the <em>tray</em>)
+        </button>
+    </div>
+
+    <div class="nav-item u-category-communication">
+        <h5 class="nav-category">
+            <svg class="nav-icon">
+                <use xlink:href="/img/icons.svg#icon-communication"></use>
+            </svg>
+            IPC通讯(Communication)
+        </h5>
+        <button type="button" id="button-ipc" data-section="ipc" class="nav-button">
+            在<em>两个进程</em>中通讯
+            (Communicate between the <em>two processes</em>)
+        </button>
+        <button disabled type="button" id="button-hosthook" data-section="hosthook" class="nav-button">
+            执行你自己的<em>TypeScript代码</em>
+            (Execute your own <em>TypeScript code</em>)
+        </button>
+    </div>
+
+    <div class="nav-item u-category-system">
+        <h5 class="nav-category">
+            <svg class="nav-icon">
+                <use xlink:href="/img/icons.svg#icon-system"></use>
+            </svg>
+            系统(System)
+        </h5>
+        <button type="button" id="button-app-sys-information" data-section="app-sys-information" class="nav-button">
+            获取App或用户<em>系统信息</em>
+            (Get app or user <em>system information</em>)
+        </button>
+        <button type="button" id="button-clipboard" data-section="clipboard" class="nav-button">
+            使用<em>剪切板</em>进行复制和粘贴
+            (Copy and paste from the <em>clipboard</em>)
+        </button>
+        <!-- <button type="button" id="button-protocol" data-section="protocol" class="nav-button">Launch app from <em>protocol handler</em></button> -->
+    </div>
+
+    <div class="nav-item u-category-update">
+        <h5 class="nav-category">
+            <svg class="nav-icon">
+                <use xlink:href="/img/icons.svg#icon-update"></use>
+            </svg>
+            更新升级(Update)
+        </h5>
+        <button type="button" id="button-update" data-section="update" class="nav-button">
+            使App可以自动<em>升级</em>
+            (Enable apps to <em>update</em> themselves)
+        </button>
+    </div>
+
+    <div class="nav-item u-category-media">
+        <h5 class="nav-category">
+            <svg class="nav-icon">
+                <use xlink:href="/img/icons.svg#icon-media"></use>
+            </svg>
+            媒体(Media)
+        </h5>
+        <button type="button" id="button-pdf" data-section="pdf" class="nav-button">
+            <em>打印</em>到PDF
+            (<em>Print</em> to PDF)
+        </button>
+        <button type="button" id="button-desktop-capturer" data-section="desktop-capturer" class="nav-button">
+            制作一个<em>截屏</em>
+            (Take a <em>screenshot</em>)
+        </button>
+    </div>
+
+    <footer class="nav-footer">
+        <button type="button" id="button-about" data-modal="about" class="nav-footer-button">
+            关于( About)
+        </button>
+        <a class="nav-footer-logo" href="https://gitee.com/n__n/electron-java" aria-label="Homepage"
+           target="_blank">
+            在JAVA中用<img alt="心" src="/img/heart.jpg" style="width:14px;"/>制作
+            (Made with <img alt="heart" src="/img/heart.jpg" style="width:14px;"/> in JAVA)
+        </a>
+    </footer>
+</nav>
+
+<main class="content js-content is-shown"></main>
+
+<script src="/imports.js"></script>
+<script src="/ex-links.js"></script>
+<script src="/nav.js"></script>
+<script src="/demo-btns.js"></script>
+<script src="/highlight.min.js"></script>
+<script src="/code-blocks.js"></script>
+</body>
+</html>
