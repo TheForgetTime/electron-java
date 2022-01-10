@@ -77,6 +77,7 @@ public class BrowserWindowOptions {
     private Vibrancy vibrancy;
     private Boolean zoomToPageWidth;
     private String tabbingIdentifier;
+    @Builder.Default
     private WebPreferences webPreferences = new WebPreferences();
     private TitleBarOverlay titleBarOverlay;
 

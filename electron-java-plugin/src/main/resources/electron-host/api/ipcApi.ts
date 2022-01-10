@@ -6,12 +6,14 @@ let electronSocket;
 export = (socket: Socket) => {
     electronSocket = socket;
     socket.on('registerIpcMainChannel', (channel) => {
+        ipcMain.removeAllListeners(channel)
         ipcMain.on(channel, (event, args) => {
             electronSocket.emit(channel, [event.preventDefault(), args]);
         });
     });
 
     socket.on('registerSyncIpcMainChannel', (channel) => {
+        ipcMain.removeAllListeners(channel)
         ipcMain.on(channel, (event, args) => {
             const x = <any>socket;
             x.removeAllListeners(channel + 'Sync');

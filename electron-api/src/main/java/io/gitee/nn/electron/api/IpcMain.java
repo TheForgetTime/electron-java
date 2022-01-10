@@ -24,9 +24,10 @@ public final class IpcMain {
     }
 
     public void On(String channel, Action1<Object> listener) {
-        BridgeConnector.getSocket().emit("registerIpcMainChannel", channel);
-        BridgeConnector.getSocket().off(channel);
-        BridgeConnector.getSocket().on(channel, (args) -> {
+        var socket= BridgeConnector.getSocket();
+        socket.emit("registerIpcMainChannel", channel);
+        socket.off(channel);
+        socket.on(channel, (args) -> {
             var argList = Electron.fromJsonString(args[0].toString(), ArrayList.class, Object.class);
             if (argList.size() == 1) {
                 listener.accept(argList.get(0));
